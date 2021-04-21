@@ -6,6 +6,11 @@ from src.repositories import AccountRepository
 
 app = Flask(__name__)
 
+@app.route('/reset', methods=['POST'])
+def reset():
+    database.reset()
+    return 'OK', 200
+
 @app.route('/event', methods=['POST'])
 def exec_event():
     request_data = request.get_json()
