@@ -33,3 +33,11 @@ def exec_event():
     return jsonify({'destination': account}), 201
 
     
+@app.route('/balance', methods=['GET'])
+def balance():
+    account_id = request.args.get('account_id')
+    account_repository = AccountRepository(database)
+    account = account_repository.find(account_id)
+    if not account:
+        return '0', 404
+    return str(account.balance), 200
