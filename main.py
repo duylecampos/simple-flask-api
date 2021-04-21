@@ -20,8 +20,15 @@ def exec_event():
         abort(400, 'Invalid arguments')
     
     account_repository = AccountRepository(database)
+    try:
+        if event.type == 'deposit':
     account = account_repository.deposit(event)
-
+        elif event.type == 'withdraw':
+            account = account_repository.withdraw(event)
+        else:
+            return 'Invalid event type!', 400
+    except AccountNotFound:
+        return '0', 404
     return jsonify({'destination': account}), 201
 
     

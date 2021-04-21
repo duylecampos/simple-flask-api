@@ -1,5 +1,6 @@
 from src import database
 from src.entities import Event, Account
+from src.exceptions import AccountNotFound
 
 
 class AccountRepository:
@@ -17,6 +18,14 @@ class AccountRepository:
         if not account:
             account = Account(id=event.destination)
         account.deposit(event.amount)
+        self._database.upsert(account)
+        return account
+
+    def withdraw(self, event: Event) -> Account:
+        account = self.find(event.origin)
+        if not account:
+            raise AccountNotFound()
+        account.withdraw(event.amount)
         self._database.upsert(account)
         return account
         
