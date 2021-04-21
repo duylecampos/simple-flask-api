@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, abort
 from src import database
 from src.entities import Event
+from src.exceptions import AccountNotFound
 from src.repositories import AccountRepository
 
 
@@ -13,16 +14,16 @@ def reset():
 
 @app.route('/event', methods=['POST'])
 def exec_event():
-    request_data = request.get_json()
+    request_data = request.get_json(force=True)
     try:
         event = Event(**request_data)
     except TypeError:
-        abort(400, 'Invalid arguments')
+        return 'Invalid arguments', 400
     
     account_repository = AccountRepository(database)
     try:
         if event.type == 'deposit':
-    account = account_repository.deposit(event)
+            account = account_repository.deposit(event)
         elif event.type == 'withdraw':
             account = account_repository.withdraw(event)
         else:
